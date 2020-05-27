@@ -1,0 +1,8 @@
+# Perform LF normalization
+* text eol=lf
+*.vim eol=lf
+
+*.a binary
+*.dll binary
+*.lib binary
+*.png binary
