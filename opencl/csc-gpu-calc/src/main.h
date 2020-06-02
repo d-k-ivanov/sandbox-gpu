@@ -1,5 +1,5 @@
-#ifndef MAIN_H
-#define MAIN_H
+#ifndef CGC_MAIN_H
+#define CGC_MAIN_H
 /*
  * =====================================================================
  *      Project :  csc-gpu-calc
@@ -9,5 +9,5 @@
  * =====================================================================
  */
 
-#endif //MAIN_H
+#endif //CGC_MAIN_H
 

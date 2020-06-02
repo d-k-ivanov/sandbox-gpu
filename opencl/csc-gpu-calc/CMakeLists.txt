@@ -43,7 +43,7 @@ include_directories(SYSTEM ${OpenCL_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/lib)
 add_subdirectory("lib")     # ${LIBS}
 add_subdirectory("src")     # ${SRC}
 
-add_executable(csc-gpu-calc ${SRC})
+add_executable(csc-gpu-calc ${SRC} ${LIBS})
 target_link_libraries(csc-gpu-calc ${OpenCL_LIBRARIES})
 
 if(NOT TARGET csc-gpu-calc)
