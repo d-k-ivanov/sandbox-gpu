@@ -11,13 +11,23 @@
 
 #include <ostream>
 
+#include <iostream>
+#include <string>
+
+#include "utils.h"
+
+#ifdef _WIN32
+    #include <windows.h>
+#endif
+
 namespace cgc::logger
 {
     enum LogLevel
     {
-        Normal  = 0,
-        Verbose = 1,
-        Debug   = 2
+        Error   = 0,
+        Normal  = 1,
+        Verbose = 2,
+        Debug   = 3
 
     };
 
@@ -27,6 +37,24 @@ namespace cgc::logger
 
     inline NoStreamBuf noStreamBuf;
     inline std::ostream noOut(&noStreamBuf);
+
+    constexpr std::ostream& LogE(const LogLevel lvl)
+    {
+        if (lvl >= Error)
+        {
+            return std::cout << "Error: ";
+        }
+        return noOut;
+    }
+
+    constexpr std::ostream& LogN(const LogLevel lvl)
+    {
+        if (lvl >= Normal)
+        {
+            return std::cout;
+        }
+        return noOut;
+    }
 
     constexpr std::ostream& LogV(const LogLevel lvl)
     {
@@ -41,9 +69,16 @@ namespace cgc::logger
     {
         if (lvl >= Debug)
         {
-            return std::cout << "\tDEBUG: ";
+            return std::cout << "Debug: ";
         }
         return noOut;
+    }
+
+    inline void PrintError(const std::string &msg)
+    {
+        SetConsoleRed();
+        LogE(logLevel) << msg << std::endl;
+        ResetConsole();
     }
 
     // template <LogLevel L>

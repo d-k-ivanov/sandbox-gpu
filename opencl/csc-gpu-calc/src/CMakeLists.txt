@@ -5,4 +5,12 @@ file(GLOB_RECURSE MAIN
 
 source_group("Main" FILES ${MAIN})
 
-set(SRC ${MAIN} PARENT_SCOPE)
+file(GLOB_RECURSE TASKS
+    "task1.cpp"
+    # "task2.cpp"
+    # "task3.cpp"
+ )
+
+source_group("Tasks" FILES ${TASKS})
+
+set(SRC ${MAIN} ${TASKS} PARENT_SCOPE)

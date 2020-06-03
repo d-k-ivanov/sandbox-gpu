@@ -7,34 +7,25 @@
  * =====================================================================
  */
 
+#include "main.h"
+
 #include <cxxopts.h>
 #include <logger.h>
+#include "utils.h"
 
 #include <functional>
 #include <iostream>
 #include <string>
-#include <thread>
-#include <vector>
-
-#if defined (__APPLE__) || defined(MACOSX)
-    #include <OpenCL/opencl.h>
-#else
-    #include <CL/opencl.h>
-#endif
-
-#ifdef _WIN32
-    #include <windows.h>
-#endif
 
 using namespace cgc;
 
 std::map<std::string, std::function<void()>> Init(int argc, char* argv[])
 {
-    std::map<std::string, std::function<void()>> problems =
+    std::map<std::string, std::function<void()>> tasks =
     {
-        // { "task1", task1},
-        // { "task2", task2},
-        // { "task3", task3}
+        { "task1", Task1},
+        // { "task2", Task2},
+        // { "task3", Task3}
     };
 
     cxxopts::Options options("csc-gpu-calc", "Description");
@@ -46,18 +37,18 @@ std::map<std::string, std::function<void()>> Init(int argc, char* argv[])
         ("h,help",      "Show help")
         ("d,debug",     "Show debug output")
         ("v,verbose",   "Show verbose output")
-        ("s,separate",  "Show separated numbers in output")
         ("t,task",      "Task number", cxxopts::value<int>(), "N");
 
-    options.custom_help("[-h] [-v] [-s]");
+    options.custom_help("[-h] [-v] [-d] [-t N]");
 
     try {
-        options.parse_positional({ "help", "verbose", "debug", "separate" });
+        options.parse_positional({ "help", "verbose", "debug", "task" });
         const auto result = options.parse(argc, argv);
 
         if (result.count("help")) {
+            SetConsoleGreen();
             std::cout << options.help() << '\n';
-            // std::system("pause");
+            ResetConsole();
             exit(1);
         }
 
@@ -72,25 +63,28 @@ std::map<std::string, std::function<void()>> Init(int argc, char* argv[])
         if (result.count("task"))
         {
             const auto taskNumber = result["task"].as<int>();
-            if (taskNumber > 3)
+            if (taskNumber > 1)
             {
-                std::cout << "There are only three problems. Exiting...\n";
+                std::cout << "There are only one task. Exiting...\n";
                 exit(2);
             }
             LogV(logger::logLevel) << std::string(100, '-') << '\n';
-            problems["problem" + std::to_string(taskNumber)]();
+            tasks["task" + std::to_string(taskNumber)]();
             LogV(logger::logLevel) << std::string(100, '-') << '\n';
 
             exit(0);
         }
     }
     catch (const cxxopts::OptionException & e) {
-        std::cout << "Error: " << e.what() << " Showing help message...\n";
+        SetConsoleRed();
+        LogE(logger::logLevel) << e.what() << " Showing help message...\n";
+        SetConsoleGreen();
         std::cout << options.help() << '\n';
+        ResetConsole();
         exit(99);
     }
 
-    return problems;
+    return tasks;
 }
 
 int main(int argc, char* argv[], char* env[])
@@ -100,18 +94,10 @@ int main(int argc, char* argv[], char* env[])
     ((void)argv);
     ((void)env );
 
-    #ifdef _WIN32
-    SetConsoleOutputCP(CP_UTF8);
-    #endif
+    InitConsole();
 
-    #ifdef _WIN32
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_GREEN | FOREGROUND_BLUE);
-    #elif
-    std::cout << termcolor::bold << termcolor::yellow;
-    #endif
-
-    std::map<std::string, std::function<void()>> tasks = Init(argc, argv);
-    for (std::pair<std::string, std::function<void()>> func: tasks)
+    auto tasks = Init(argc, argv);
+    for (auto&& func: tasks)
     {
         LogV(logger::logLevel) << std::string(100, '-') << '\n';
         func.second();
@@ -119,12 +105,7 @@ int main(int argc, char* argv[], char* env[])
     LogV(logger::logLevel) << std::string(100, '-') << '\n';
 
 
-    #ifdef _WIN32
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
-    #elif
-    std::cout << termcolor::reset;
-    #endif
-
+    ResetConsole();
     // std::system("pause")
     return 0;
 }
