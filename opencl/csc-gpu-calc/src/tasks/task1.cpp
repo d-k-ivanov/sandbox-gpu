@@ -3,7 +3,7 @@
  *      Project :  csc-gpu-calc
  *      File    :  task1.cpp
  *      Created :  6/3/2020 1:15:24 AM +0300
- *      Author  :  Dmitriy Ivanov
+ *      Author  :  Dmitry Ivanov
  * =====================================================================
  */
 

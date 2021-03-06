@@ -17,8 +17,8 @@ set_base_vars()
 fix_project_version()
 
 # Set additional project information
-set(COMPANY "Dmitriy Ivanov")
-set(COPYRIGHT "Copyright (c) 2020 Dmitriy Ivanov. All rights reserved.")
+set(COMPANY "Dmitry Ivanov")
+set(COPYRIGHT "Copyright (c) 2021 Dmitry Ivanov. All rights reserved.")
 set(IDENTIFIER "com.pupupon.dev.csc-gpu-calc")
 
 include(Debug)

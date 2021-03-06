@@ -5,7 +5,7 @@
  *      Project :  csc-gpu-calc
  *      File    :  logger.h
  *      Created :  6/1/2020 10:52:54 PM +0300
- *      Author  :  Dmitriy Ivanov
+ *      Author  :  Dmitry Ivanov
  * =====================================================================
  */
 
