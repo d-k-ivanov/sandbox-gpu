@@ -20,12 +20,16 @@ $command = {
             'C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools'
             'C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional'
             'C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise'
-            'C:\Program Files (x86)\Microsoft Visual Studio\2017\Preview'
+            'C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview'
             'C:\Program Files (x86)\Microsoft Visual Studio\2019\Community'
             'C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools'
             'C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional'
             'C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise'
-            'C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview'
+            'C:\Program Files\Microsoft Visual Studio\2022\Preview'
+            'C:\Program Files\Microsoft Visual Studio\2022\Community'
+            'C:\Program Files\Microsoft Visual Studio\2022\BuildTools'
+            'C:\Program Files\Microsoft Visual Studio\2022\Professional'
+            'C:\Program Files\Microsoft Visual Studio\2022\Enterprise'
         )
 
         $cmd_string = "cmd /c "
@@ -70,41 +74,49 @@ $command = {
         }
     }
 
-    # function Set-QT {
-    #     if ($env:QTDIR) {
-    #         Remove-Item Env:QTDIR
-    #     }
-    #     if ($env:QMAKESPEC) {
-    #         Remove-Item Env:QMAKESPEC
-    #     }
-    #     if ($env:QMAKE_TARGET.arch) {
-    #         Remove-Item Env:QMAKE_TARGET.arch
-    #     }
+    function Set-QT {
+        if ($env:QTDIR) {
+            Remove-Item Env:QTDIR
+        }
+        if ($env:QMAKESPEC) {
+            Remove-Item Env:QMAKESPEC
+        }
+        if ($env:QMAKE_TARGET.arch) {
+            Remove-Item Env:QMAKE_TARGET.arch
+        }
 
-    #     Set-Item -Path Env:QTDIR -Value "C:\Qt\Qt5.13.2\5.13.2\msvc2017"
-    #     Set-Item -Path Env:QMAKESPEC -Value "C:\Qt\Qt5.13.2\5.13.2\msvc2017\mkspecs\win32-msvc"
-    #     Set-Item -Path Env:QMAKE_TARGET.arch -Value "x86"
-    # }
+        Set-Item -Path Env:QTDIR -Value "C:\Qt\Qt5.12.1\5.12.1\msvc2017"
+        Set-Item -Path Env:QMAKESPEC -Value "C:\Qt\Qt5.12.1\5.12.1\msvc2017\mkspecs\win32-msvc"
+        Set-Item -Path Env:QMAKE_TARGET.arch -Value "x86"
+    }
 
     function build {
-        # Set-QT
-        # Set-Item -Path Env:PATH -Value "${Env:QTDIR}\bin;${Env:PATH}"
+        Set-QT
+        Set-Item -Path Env:PATH -Value "${Env:QTDIR}\bin;${Env:PATH}"
         Set-VC-Vars-All x86
 
         if (
+            (Test-Path "C:\Program Files\Microsoft Visual Studio\2022\BuildTools")              -Or
+            (Test-Path "C:\Program Files\Microsoft Visual Studio\2022\Community")               -Or
+            (Test-Path "C:\Program Files\Microsoft Visual Studio\2022\Enterprise")              -Or
+            (Test-Path "C:\Program Files\Microsoft Visual Studio\2022\Preview")                 -Or
+            (Test-Path "C:\Program Files\Microsoft Visual Studio\2022\Professional")) {
+                Write-Output "Unsing VS2019 Generator"
+                cmake -G "Visual Studio 17 2022" -A Win32 -DCMAKE_BUILD_TYPE="Release" ..
+        } elseif (
             (Test-Path "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools")        -Or
             (Test-Path "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community")         -Or
             (Test-Path "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise")        -Or
-            (Test-Path "C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional")      -Or
-            (Test-Path "C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview")) {
+            (Test-Path "C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview")           -Or
+            (Test-Path "C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional")) {
                 Write-Output "Unsing VS2019 Generator"
                 cmake -G "Visual Studio 16 2019" -A Win32 -DCMAKE_BUILD_TYPE="Release" ..
         } elseif (
             (Test-Path 'C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools')        -Or
             (Test-Path 'C:\Program Files (x86)\Microsoft Visual Studio\2017\Community')         -Or
             (Test-Path 'C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise')        -Or
-            (Test-Path 'C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional')      -Or
-            (Test-Path 'C:\Program Files (x86)\Microsoft Visual Studio\2017\Preview')
+            (Test-Path 'C:\Program Files (x86)\Microsoft Visual Studio\2017\Preview')           -Or
+            (Test-Path 'C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional')
             ){
                 Write-Output "Unsing VS2017 Generator"
                 cmake -G "Visual Studio 15 2017" -A Win32 -DCMAKE_BUILD_TYPE="Release" ..
